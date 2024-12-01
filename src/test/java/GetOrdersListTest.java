@@ -4,18 +4,18 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import io.qameta.allure.junit4.DisplayName;
 import java.io.File;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class GetOrdersListTest {
+    String token;
 
-    AuthController authController = new AuthController();
     OrdersController ordersController = new OrdersController();
     UserController userController = new UserController();
 
-    @Test
-    @DisplayName("Получение списка заказов пользователя по токену")
-    public void testGetUserOrders() {
-        String token = userController.createUser(
+    @Before
+    public void setUp() {
+        token = userController.createUser(
                 Constants.RANDOM_EMAIL,
                 Constants.TEST_USER_PASSWORD,
                 Constants.TEST_USER_NAME
@@ -24,7 +24,11 @@ public class GetOrdersListTest {
             .extract()
             .body()
             .path("accessToken");
+    }
 
+    @Test
+    @DisplayName("Получение списка заказов пользователя по токену")
+    public void testGetUserOrders() {
         ordersController.getUserOrders(token);
         ordersController.createOrderWithToken(token, new File("src/test/resources/OrderWithIngredients.json"));
         ordersController.getUserOrders(token)
@@ -50,10 +54,8 @@ public class GetOrdersListTest {
         ordersController.getIngredientsList().then().statusCode(200).body("success", equalTo(true));
     }
 
-
     @After
     public void tearDown() {
-        String token = authController.getAuthToken(Constants.RANDOM_EMAIL, Constants.TEST_USER_PASSWORD);
         if (token != null) {
             userController.deleteUser(token).then().statusCode(202);
             System.out.printf("\nПользователь %s удален", Constants.RANDOM_EMAIL);

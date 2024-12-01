@@ -16,11 +16,7 @@ public class CreateUserTest {
             Constants.RANDOM_EMAIL,
             Constants.TEST_USER_PASSWORD,
             Constants.TEST_USER_NAME
-        )
-            .then()
-            .statusCode(200)
-            .and()
-            .body("success", equalTo(true));
+        ).then().statusCode(200).and().body("success", equalTo(true));
     }
 
 

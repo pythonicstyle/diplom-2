@@ -34,13 +34,14 @@ public class UserController {
     }
 
     @Step("Обновление информации о пользователе")
-    public Response updateUser(String email, String name, String token) {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("email", email);
-        data.put("name", name);
+    public Response updateUser(String email, String name, String pass, String token) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("name", name);
+        map.put("password", pass);
         return Specification.getRequestSpecification()
             .header("Authorization", token)
-            .body(data)
+            .body(map)
             .patch("/api/auth/user");
     }
 
