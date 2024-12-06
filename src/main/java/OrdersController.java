@@ -1,41 +1,41 @@
+import com.google.gson.JsonObject;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
-import java.io.File;
 
 
 public class OrdersController {
 
     @Step("Создание заказа под авторизованным пользователем")
-    public Response createOrderWithToken(String token, File file) {
+    public static Response createOrderWithToken(String token, JsonObject object) {
         return Specification.getRequestSpecification()
             .header("Authorization", token)
-            .body(file)
-            .post("/api/orders");
+            .body(object)
+            .post(Constants.API_ORDERS);
     }
 
     @Step("Создание заказа под неавторизованным пользователем")
-    public Response createOrderWithoutToken(File file) {
+    public static Response createOrderWithoutToken(JsonObject object) {
         return Specification.getRequestSpecification()
-            .body(file)
-            .post("/api/orders");
+            .body(object)
+            .post(Constants.API_ORDERS);
     }
 
     @Step("Получить список всех заказов")
-    public Response getOrdersList() {
+    public static Response getOrdersList() {
         return Specification.getRequestSpecification()
-            .get("/api/orders/all");
+            .get(Constants.API_ORDERS_ALL);
     }
 
     @Step("Получить список ингредиентов")
-    public Response getIngredientsList() {
+    public static Response getIngredientsList() {
         return Specification.getRequestSpecification()
-            .get("/api/ingredients");
+            .get(Constants.API_INGREDIENTS);
     }
 
     @Step("Получить список заказов конкретного пользователя")
     public Response getUserOrders(String token) {
         return Specification.getRequestSpecification()
             .header("Authorization", token)
-            .get("/api/orders");
+            .get(Constants.API_ORDERS);
     }
 }

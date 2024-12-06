@@ -14,4 +14,14 @@ public class Constants {
     public static final String USER_ALREADY_EXIST_ERROR = "User already exists";
     public static final String REQUIRED_FIELDS_ERROR = "Email, password and name are required fields";
     public static final String SHOULD_BE_AUTHORISED_ERROR = "You should be authorised";
+    public static final String INCORRECT_INGREDIENT_HASH = "____61c0c5a71d1f82001bdaaa75";
+
+    public static final String BASE_URL = "https://stellarburgers.nomoreparties.site";
+
+    public static final String API_AUTH_LOGIN = "/api/auth/login";
+    public static final String API_ORDERS = "/api/orders";
+    public static final String API_ORDERS_ALL = "/api/orders/all";
+    public static final String API_INGREDIENTS = "/api/ingredients";
+    public static final String API_AUTH_REGISTER = "/api/auth/register";
+    public static final String API_AUTH_USER = "/api/auth/user";
 }

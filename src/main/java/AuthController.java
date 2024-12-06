@@ -10,7 +10,7 @@ public class AuthController {
         map.put("password", pass);
         return Specification.getRequestSpecification()
             .body(map)
-            .post("/api/auth/login")
+            .post(Constants.API_AUTH_LOGIN)
             .then()
             .extract()
             .body()

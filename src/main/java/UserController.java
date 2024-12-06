@@ -13,7 +13,7 @@ public class UserController {
         map.put("name", name);
         return Specification.getRequestSpecification()
             .body(map)
-            .post("/api/auth/register");
+            .post(Constants.API_AUTH_REGISTER);
     }
 
     @Step("Создание пользователя без Email")
@@ -23,14 +23,14 @@ public class UserController {
         map.put("name", name);
         return Specification.getRequestSpecification()
             .body(map)
-            .post("/api/auth/register");
+            .post(Constants.API_AUTH_REGISTER);
     }
 
     @Step("Удаление пользователя по токену")
     public Response deleteUser(String token) {
         return Specification.getRequestSpecification()
             .header("Authorization", token)
-            .delete("/api/auth/user");
+            .delete(Constants.API_AUTH_USER);
     }
 
     @Step("Обновление информации о пользователе")
@@ -42,14 +42,14 @@ public class UserController {
         return Specification.getRequestSpecification()
             .header("Authorization", token)
             .body(map)
-            .patch("/api/auth/user");
+            .patch(Constants.API_AUTH_USER);
     }
 
     @Step("Получение информации о пользователе")
     public Response getUserInfo(String token) {
         return Specification.getRequestSpecification()
             .header("Authorization", token)
-            .get("/api/auth/user");
+            .get(Constants.API_AUTH_USER);
     }
 
     @Step("Логин пользователя")
@@ -59,6 +59,6 @@ public class UserController {
         map.put("password", pass);
         return Specification.getRequestSpecification()
             .body(map)
-            .post("/api/auth/login");
+            .post(Constants.API_AUTH_LOGIN);
     }
 }

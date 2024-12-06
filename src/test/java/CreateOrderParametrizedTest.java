@@ -1,6 +1,9 @@
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import java.io.File;
+
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,15 +14,46 @@ import org.junit.runners.Parameterized;
 public class CreateOrderParametrizedTest {
 
     String accessToken;
-
-    private final File file;
+    private final JsonObject object;
     private final Integer expectedStatusCode;
 
     UserController userController = new UserController();
-    OrdersController ordersController = new OrdersController();
 
-    public CreateOrderParametrizedTest(File file, Integer expectedStatusCode) {
-        this.file = file;
+    private static JsonObject getList() {
+        List<String> lst = OrdersController.getIngredientsList().then().extract().jsonPath().getList(
+            "data._id", String.class
+        );
+        JsonArray array = new JsonArray();
+        for (String hash : lst) {
+            array.add(hash);
+        }
+        JsonObject object = new JsonObject();
+        object.add("ingredients", array);
+        return object;
+    }
+
+    private static JsonObject getIncorrectList() {
+        List<String> lst = OrdersController.getIngredientsList().then().extract().jsonPath().getList(
+            "data._id", String.class
+        );
+        JsonArray array = new JsonArray();
+        for (String string : lst) {
+            array.add(string);
+        }
+        array.add(Constants.INCORRECT_INGREDIENT_HASH);
+        JsonObject object = new JsonObject();
+        object.add("ingredients", array);
+        return object;
+    }
+
+    private static JsonObject getEmptyList() {
+        JsonObject object = new JsonObject();
+        object.add("ingredients", new JsonArray());
+        return object;
+    }
+
+    public CreateOrderParametrizedTest(JsonObject object, Integer expectedStatusCode) {
+        this.object = object;
         this.expectedStatusCode = expectedStatusCode;
     }
 
@@ -35,9 +69,9 @@ public class CreateOrderParametrizedTest {
     @Parameterized.Parameters
     public static Object[][] data() {
         return new Object[][] {
-            { new File("src/test/resources/OrderWithIngredients.json"), 200 },
-            { new File("src/test/resources/OrderWithoutIngredients.json"), 400 },
-            { new File("src/test/resources/OrderWithIncorrectIngredient.json"), 500 },
+            { getList(), 200 },
+            { getEmptyList(), 400 },
+            { getIncorrectList(), 500 },
             };
     }
 
@@ -45,7 +79,7 @@ public class CreateOrderParametrizedTest {
     @DisplayName("Создание заказа")
     @Description("Параметризированный тест для создания заказов авторизованным пользователем")
     public void createOrderWithTokenTest() {
-        ordersController.createOrderWithToken(accessToken, file)
+        OrdersController.createOrderWithToken(accessToken, object)
             .then()
             .statusCode(expectedStatusCode);
     }
@@ -54,7 +88,7 @@ public class CreateOrderParametrizedTest {
     @DisplayName("Создание заказа")
     @Description("Параметризированный тест для создания заказов неавторизованным пользователем")
     public void createOrderWithoutTokenTest() {
-        ordersController.createOrderWithoutToken(file)
+        OrdersController.createOrderWithoutToken(object)
             .then()
             .statusCode(expectedStatusCode);
     }

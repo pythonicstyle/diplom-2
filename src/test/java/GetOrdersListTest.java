@@ -1,8 +1,10 @@
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.qameta.allure.junit4.DisplayName;
-import java.io.File;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,16 @@ public class GetOrdersListTest {
     @DisplayName("Получение списка заказов пользователя по токену")
     public void testGetUserOrders() {
         ordersController.getUserOrders(token);
-        ordersController.createOrderWithToken(token, new File("src/test/resources/OrderWithIngredients.json"));
+        List<String> lst = OrdersController.getIngredientsList().then().extract().jsonPath().getList(
+            "data._id", String.class
+        );
+        JsonArray array = new JsonArray();
+        for (String hash : lst) {
+            array.add(hash);
+        }
+        JsonObject object = new JsonObject();
+        object.add("ingredients", array);
+        OrdersController.createOrderWithToken(token, object);
         ordersController.getUserOrders(token)
             .then()
             .statusCode(200)
@@ -43,15 +54,15 @@ public class GetOrdersListTest {
     @Test
     @DisplayName("Получение списка заказов всех пользователей")
     public void testGetOrdersList() {
-        ordersController.getOrdersList().then().statusCode(200).body("success", equalTo(true));
-        Integer totalOrders = ordersController.getOrdersList().then().extract().body().path("total");
+        OrdersController.getOrdersList().then().statusCode(200).body("success", equalTo(true));
+        Integer totalOrders = OrdersController.getOrdersList().then().extract().body().path("total");
         System.out.printf("\nВсего заказов: %d%n", totalOrders);
     }
 
     @Test
     @DisplayName("Получение списка ингредиентов")
     public void testGetIngredientsList() {
-        ordersController.getIngredientsList().then().statusCode(200).body("success", equalTo(true));
+        OrdersController.getIngredientsList().then().statusCode(200).body("success", equalTo(true));
     }
 
     @After
